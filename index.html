@@ -1,90 +1,676 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Convite GoBetter</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>GoBetter — Site</title>
+  <meta name="description" content="GoBetter - transporte de moto e carro" />
+  <!-- ========================
+       CONSTANTES / CONFIGURAÇÃO
+       Altere apenas as URLs/valores abaixo conforme necessário.
+       ======================== -->
+  <script>
+    // --- Configurações principais (modifique aqui) ---
+    window.GB_CONFIG = {
+      LOGO_URL: 'https://raw.githubusercontent.com/edimarfmatos/img_gobetter/refs/heads/main/logo%20gobetter.jpg',
+      // Banner: coloque os links das imagens que estarão no repositório (troque pelos seus links)
+      BANNER_IMAGES: [
+        // Ex.: 'https://raw.githubusercontent.com/edimarfmatos/img_gobetter/main/banner1.jpg'
+        'https://raw.githubusercontent.com/edimarfmatos/gobetter/b9f4ee1e587f210bd6302716e2878e63a2b6d273/img/carroB.svg',
+        'https://raw.githubusercontent.com/edimarfmatos/gobetter/bab086dfed7d1f103d5dae5cc86b483383073f11/img/logo.svg',
+        'https://raw.githubusercontent.com/edimarfmatos/gobetter/32b3423e29d82c6764e3da8f1feb7965cf5b255c/img/moto.svg'
+      ],
+      // Galeria: placeholders quadrados - substitua pelos links das fotos do app (PlayStore-like)
+      GALLERY_IMAGES: [
+        'https://raw.githubusercontent.com/edimarfmatos/img_gobetter/refs/heads/main/placeholder_gallery_1.jpg',
+        'https://raw.githubusercontent.com/edimarfmatos/img_gobetter/refs/heads/main/placeholder_gallery_2.jpg',
+        'https://raw.githubusercontent.com/edimarfmatos/img_gobetter/refs/heads/main/placeholder_gallery_3.jpg',
+        'https://raw.githubusercontent.com/edimarfmatos/img_gobetter/refs/heads/main/placeholder_gallery_4.jpg'
+      ],
+      // Link direto para cadastro (substitua pelo link real do formulário/app)
+      SIGNUP_LINK: 'https://example.com/cadastro',
+      // QR code: se você gerar um QR para SIGNUP_LINK (por exemplo usando um gerador),
+      // cole a url da imagem do QR aqui. Por enquanto é placeholder.
+      QR_IMAGE_URL: 'https://raw.githubusercontent.com/edimarfmatos/img_gobetter/refs/heads/main/placeholder_qr.png',
+      // Intervalo do banner em ms:
+      BANNER_INTERVAL_MS: 4000,
+      // LocalStorage key para os comentários:
+      COMMENTS_STORAGE_KEY: 'gobetter_comments_v1'
+    };
+  </script>
+
+  <!-- ========================
+       ESTILOS (internos para arquivo único)
+       Comentários para facilitar edições.
+       ======================== -->
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0d0d0d;
-      color: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      padding: 20px;
+    :root{
+      --bg: #0a0a0a;
+      --card: #121212;
+      --accent: #ffcc00; /* amarelo */
+      --accent-2: #ff3b3b; /* vermelho/destaque */
+      --text: #f2f2f2;
+      --muted: #bfbfbf;
+      --max-width: 1100px;
     }
 
-    .container {
-      text-align: center;
-      background: #1a1a1a;
-      padding: 40px 20px;
-      border-radius: 20px;
-      box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
-      max-width: 400px;
-      width: 100%;
+    html,body{
+      margin:0;
+      padding:0;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background:var(--bg);
+      color:var(--text);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
     }
 
-    .logo {
-      max-width: 200px;
-      margin-bottom: 20px;
+    /* Container centralizado */
+    .container{
+      max-width:var(--max-width);
+      margin:0 auto;
+      padding:20px;
     }
 
-    h1 {
-      font-size: 22px;
-      margin-bottom: 30px;
-      color: #ff0000;
+    /* Cabeçalho */
+    header.site-header{
+      border-bottom:1px solid rgba(255,255,255,0.04);
+      padding:12px 0;
+      position:sticky;
+      top:0;
+      background:linear-gradient(180deg, rgba(10,10,10,0.95), rgba(10,10,10,0.85));
+      z-index:100;
+    }
+    .header-inner{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    .brand img{
+      height:48px;
+      width:auto;
+      display:block;
+      border-radius:6px;
+      object-fit:contain;
+    }
+    nav.site-nav a{
+      color:var(--text);
+      text-decoration:none;
+      margin-left:18px;
+      font-weight:600;
+      opacity:0.95;
+    }
+    .cta{
+      background:var(--accent-2);
+      color:white;
+      padding:8px 14px;
+      border-radius:8px;
+      text-decoration:none;
+      font-weight:700;
     }
 
-    .btn {
-      display: block;
-      width: 100%;
-      padding: 15px;
-      margin: 10px 0;
-      border: none;
-      border-radius: 10px;
-      font-size: 18px;
-      cursor: pointer;
-      transition: transform 0.2s, background 0.3s;
+    /* Banner / Hero */
+    .hero{
+      margin-top:22px;
+      display:grid;
+      grid-template-columns:1fr;
+      gap:18px;
+      align-items:center;
+    }
+    .hero-inner{
+      position:relative;
+      overflow:hidden;
+      border-radius:12px;
+      background:linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.6));
+      min-height:260px;
+    }
+    /* imagens do banner com transição */
+    .banner-slide{
+      position:absolute;
+      inset:0;
+      background-size:cover;
+      background-position:center;
+      transition:opacity .8s ease;
+      opacity:0;
+    }
+    .banner-slide.active{ opacity:1; }
+
+    .hero-content{
+      position:relative;
+      z-index:5;
+      padding:20px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      align-items:flex-start;
+      color:var(--text);
+      text-shadow:0 4px 18px rgba(0,0,0,0.6);
+    }
+    .slogan{
+      font-size:clamp(18px,3vw,28px);
+      font-weight:800;
+      letter-spacing:0.2px;
+    }
+    .sub{
+      color:var(--muted);
+      max-width:720px;
+    }
+    .banner-controls{
+      position:absolute;
+      z-index:6;
+      right:12px;
+      bottom:12px;
+      display:flex;
+      gap:8px;
+    }
+    .banner-btn{
+      background:rgba(0,0,0,0.5);
+      border:1px solid rgba(255,255,255,0.06);
+      padding:8px;
+      border-radius:8px;
+      color:var(--text);
+      cursor:pointer;
     }
 
-    .btn:hover {
-      transform: scale(1.05);
+    /* Blocos de informações */
+    .grid-3{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:18px;
+      margin-top:18px;
+    }
+    .card{
+      background:var(--card);
+      padding:16px;
+      border-radius:12px;
+      box-shadow:0 6px 20px rgba(0,0,0,0.45);
+    }
+    .card h3{ margin:0 0 8px 0; }
+    .muted{ color:var(--muted); }
+
+    /* Galeria (quadrados responsivos) */
+    .gallery{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:10px;
+    }
+    .gallery .pic{
+      width:100%;
+      position:relative;
+      border-radius:8px;
+      overflow:hidden;
+      background:#222;
+      min-height:0;
+    }
+    /* manter proporção quadrada */
+    .gallery .pic::before{
+      content:'';
+      display:block;
+      padding-top:100%;
+    }
+    .gallery img{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
     }
 
-    .motorista {
-      background: #e50914;
-      color: #fff;
+    /* Sobre Nós e Contato seções */
+    section{ padding:28px 0; }
+
+    /* Comentários (Contato) */
+    .comment-form input, .comment-form textarea{
+      width:100%;
+      padding:10px;
+      margin-bottom:8px;
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,0.06);
+      background:#0d0d0d;
+      color:var(--text);
+      resize:vertical;
+    }
+    .comments-list{
+      margin-top:12px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .comment{
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      padding:12px;
+      border-radius:10px;
+    }
+    .small{ font-size:12px; color:var(--muted); }
+
+    /* Rodapé */
+    footer{
+      border-top:1px solid rgba(255,255,255,0.04);
+      padding:18px 0;
+      margin-top:28px;
+      text-align:center;
+      color:var(--muted);
     }
 
-    .cliente {
-      background: #444;
-      color: #fff;
+    /* Responsividade */
+    @media (max-width:900px){
+      .grid-3{ grid-template-columns:1fr; }
+      .gallery{ grid-template-columns:repeat(2,1fr); }
+      .brand img{ height:42px; }
     }
-
-    .footer {
-      margin-top: 20px;
-      font-size: 14px;
-      color: #aaa;
+    @media (max-width:480px){
+      nav.site-nav{ display:none; } /* simplificação para mobile */
+      .hero-inner{ min-height:220px; }
+      .gallery{ grid-template-columns:repeat(2,1fr); gap:8px; }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <img src="https://raw.githubusercontent.com/edimarfmatos/img_gobetter/refs/heads/main/logo%20gobetter.jpg" alt="Logo GoBetter" class="logo">
-    <h1>Seja Motorista ou Cliente GoBetter</h1>
+  <!-- ========================
+       CABEÇALHO (Header)
+       OBS: trocar LOGO no topo trocando GB_CONFIG.LOGO_URL
+       ======================== -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <a href="#home" aria-label="GoBetter - Home">
+          <img id="gbLogo" src="" alt="Logo GoBetter">
+        </a>
+        <div>
+          <div style="font-weight:800">GoBetter</div>
+          <div style="font-size:12px;color:var(--muted)">Transporte de moto e carro</div>
+        </div>
+      </div>
 
-    <button class="btn motorista" onclick="window.location.href='https://play.google.com/store/apps/details?id=com.gobetter.driverapp'">
-      🚗 Baixar App Motorista
-    </button>
+      <nav class="site-nav" aria-label="Navegação principal">
+        <a href="#home">Home</a>
+        <a href="#sobre">Sobre nós</a>
+        <a href="#contato">Contato</a>
+        <a class="cta" id="signupBtn" href="#" target="_blank" rel="noopener">Cadastrar</a>
+      </nav>
+    </div>
+  </header>
 
-    <button class="btn cliente" onclick="window.location.href='https://play.google.com/store/apps/details?id=com.gobetter.customerapp'">
-      🙋 Baixar App Passageiro
-    </button>
+  <!-- ========================
+       HOME (seção principal)
+       ======================== -->
+  <main id="home" class="container">
+    <!-- HERO / BANNER -->
+    <section class="hero">
+      <div class="hero-inner" id="heroInner">
+        <!-- Slides (preenchidos por JS) -->
+        <!-- Conteúdo por cima do banner -->
+        <div class="hero-content">
+          <div class="slogan">levando você de um jeito melhor</div>
+          <div class="sub">Transporte seguro, rápido e econômico. Motoristas qualificados e clientes satisfeitos — cadastre-se e experimente.</div>
+          <div style="display:flex;gap:12px;align-items:center;margin-top:8px;">
+            <a id="signupLink" class="cta" href="#" target="_blank" rel="noopener">Fazer cadastro</a>
+            <a href="#contato" class="banner-btn">Fale conosco</a>
+          </div>
+        </div>
 
-    <div class="footer">GoBetter – Movendo você de um jeito melhor</div>
-  </div>
+        <!-- controles do banner -->
+        <div class="banner-controls" id="bannerControls" aria-hidden="false">
+          <button class="banner-btn" id="prevSlide" title="Anterior">◀</button>
+          <button class="banner-btn" id="nextSlide" title="Próximo">▶</button>
+        </div>
+      </div>
+
+      <!-- Três blocos principais abaixo do banner -->
+      <div class="grid-3">
+        <div class="card">
+          <h3>Apresentação</h3>
+          <p class="muted">GoBetter conecta passageiros e motofretistas / motoristas com foco em segurança e praticidade. Comece agora — cadastre-se com QR ou link.</p>
+        </div>
+        <div class="card">
+          <h3>Benefícios</h3>
+          <ul class="muted">
+            <li>Transporte seguro e confiável</li>
+            <li>Tarifas competitivas</li>
+            <li>Atendimento rápido</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Cadastro</h3>
+          <p class="muted">Leia o QR code ou clique no botão para se cadastrar.</p>
+          <div style="display:flex;gap:10px;align-items:center;margin-top:8px;">
+            <img id="qrImg" src="" alt="QR Code de cadastro" style="width:90px;height:90px;border-radius:8px;object-fit:cover;background:#111;border:1px solid rgba(255,255,255,0.03)">
+            <div>
+              <div class="small muted">Ou acesse:</div>
+              <a id="signupLinkText" href="#" target="_blank" rel="noopener" class="muted">Link para cadastro</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Galeria pequena -->
+      <div style="margin-top:16px;">
+        <h3 style="margin:8px 0 10px 0">Galeria</h3>
+        <div class="gallery" id="galleryArea" aria-live="polite">
+          <!-- preenchido por JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================
+         SOBRE NÓS
+         ======================== -->
+    <section id="sobre">
+      <div style="display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap;">
+        <div style="flex:1;min-width:260px;" class="card">
+          <h3>Sobre o GoBetter</h3>
+          <p class="muted">GoBetter é uma plataforma de transporte para motos e carros, pensada para agilidade, economia e segurança. Reunimos tecnologia e atendimento local para melhorar sua viagem.</p>
+          <h4>Benefícios</h4>
+          <ul class="muted">
+            <li>Fácil de usar</li>
+            <li>Tarifas justas</li>
+            <li>Rastreamento de corridas</li>
+          </ul>
+        </div>
+
+        <!-- Espaço reservado para fotos (quadrado) -->
+        <div style="width:320px;max-width:40%;" class="card">
+          <h3>Fotos (placeholder)</h3>
+          <div style="width:100%;border-radius:8px;overflow:hidden;background:#111;padding:12px;display:flex;justify-content:center;align-items:center">
+            <!-- quadrado reservado: substitua a <img> pela sua imagem quando disponível -->
+            <div style="width:100%;aspect-ratio:1/1;background:#222;display:flex;align-items:center;justify-content:center;border-radius:6px;">
+              <span class="muted">Substituir pelo link das imagens</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Área para vídeo institucional (colocada aqui - mas pode ser movida para página separada) -->
+      <div style="margin-top:18px;" class="card">
+        <h3>Vídeo institucional</h3>
+        <p class="muted">O vídeo ficará na página "Sobre nós" (ou pode ser movido para outra página se ficar pesado). Você pode substituir o <code>&lt;iframe&gt;</code> abaixo pelo link do vídeo (YouTube/Vimeo) quando disponível.</p>
+        <!-- Video placeholder (substituir src pelo embed do YouTube/Vimeo) -->
+        <div style="position:relative;padding-top:56.25%;background:#000;border-radius:8px;overflow:hidden">
+          <iframe id="promoVideo" style="position:absolute;inset:0;border:0" src="" allowfullscreen title="Vídeo GoBetter"></iframe>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================
+         CONTATO (com comentários)
+         ======================== -->
+    <section id="contato">
+      <div class="card">
+        <h3>Contato</h3>
+        <p class="muted">Tem dúvidas, sugestões ou reclamações? Deixe uma mensagem — ela ficará salva localmente (apenas neste navegador) e aparecerá abaixo.</p>
+
+        <!-- Formulário de comentário -->
+        <div class="comment-form" style="margin-top:12px;">
+          <input id="commentName" type="text" placeholder="Seu nome (opcional)">
+          <textarea id="commentMsg" rows="4" placeholder="Escreva seu comentário..."></textarea>
+          <div style="display:flex;gap:8px;">
+            <button id="sendComment" class="cta" style="background:var(--accent-2);border:none;">Enviar comentário</button>
+            <button id="clearComments" class="banner-btn" style="background:transparent;">Limpar comentários</button>
+          </div>
+        </div>
+
+        <!-- Lista de comentários -->
+        <div class="comments-list" id="commentsList" aria-live="polite" style="margin-top:12px;">
+          <!-- populado por JS -->
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- RODAPÉ -->
+  <footer>
+    <div class="container">
+      <div style="margin-bottom:6px">© <strong>GoBetter</strong> — Todos os direitos reservados</div>
+      <div class="small">Feito para web — responsivo para desktop e mobile</div>
+    </div>
+  </footer>
+
+  <!-- ========================
+       SCRIPTS
+       Comentários indicam onde alterar valores importantes.
+       ======================== -->
+  <script>
+    (function(){
+      // ----------------------------------------------------------------------------
+      // Inicialização a partir das constantes definidas no topo (GB_CONFIG)
+      // ----------------------------------------------------------------------------
+      const cfg = window.GB_CONFIG || {};
+      // Elementos importantes
+      const logoEl = document.getElementById('gbLogo');
+      const signupBtn = document.getElementById('signupBtn');
+      const signupLink = document.getElementById('signupLink');
+      const signupLinkText = document.getElementById('signupLinkText');
+      const qrImg = document.getElementById('qrImg');
+      const galleryArea = document.getElementById('galleryArea');
+      const heroInner = document.getElementById('heroInner');
+      const promoVideo = document.getElementById('promoVideo');
+
+      // Configurar logo e links (troque apenas no topo GB_CONFIG)
+      logoEl.src = cfg.LOGO_URL || '';
+      signupBtn.href = cfg.SIGNUP_LINK || '#';
+      signupLink.href = cfg.SIGNUP_LINK || '#';
+      signupLinkText.href = cfg.SIGNUP_LINK || '#';
+      qrImg.src = cfg.QR_IMAGE_URL || '';
+      // Vídeo (deixe vazio se não quiser carregar agora) - substitua pelo embed do YouTube quando tiver
+      promoVideo.src = cfg.VIDEO_EMBED || '';
+
+      // ----------------------------------------------------------------------------
+      // BANNER ROTATIVO - criação dinâmica dos slides a partir de cfg.BANNER_IMAGES
+      // ----------------------------------------------------------------------------
+      const slides = [];
+      const bannerContainer = heroInner;
+      const bannerImages = Array.isArray(cfg.BANNER_IMAGES) ? cfg.BANNER_IMAGES : [];
+      let currentIndex = 0;
+      let autoplayTimer = null;
+      const intervalMs = cfg.BANNER_INTERVAL_MS || 4000;
+
+      // Função para criar slides DOM
+      function createSlides(){
+        bannerImages.forEach((url, idx) => {
+          const div = document.createElement('div');
+          div.className = 'banner-slide';
+          div.style.backgroundImage = `url('${url}')`;
+          div.setAttribute('data-idx', idx);
+          bannerContainer.appendChild(div);
+          slides.push(div);
+        });
+
+        // fallback: se não houver imagens configuradas, cria um slide simples com gradiente
+        if(slides.length === 0){
+          const div = document.createElement('div');
+          div.className = 'banner-slide active';
+          div.style.background = 'linear-gradient(135deg,#111,#1a1a1a)';
+          div.innerHTML = '<div style="position:absolute;left:20px;bottom:20px;color:var(--muted)">Imagem do banner não configurada. Substitua GB_CONFIG.BANNER_IMAGES.</div>';
+          bannerContainer.appendChild(div);
+          slides.push(div);
+        } else {
+          // torna o primeiro slide visível
+          slides[0].classList.add('active');
+        }
+      }
+
+      // Mudar slide para index
+      function goToSlide(index){
+        if(slides.length === 0) return;
+        slides.forEach((s,i) => s.classList.toggle('active', i === index));
+        currentIndex = index;
+      }
+      function nextSlide(){
+        const next = (currentIndex + 1) % slides.length;
+        goToSlide(next);
+      }
+      function prevSlide(){
+        const prev = (currentIndex - 1 + slides.length) % slides.length;
+        goToSlide(prev);
+      }
+      // Auto-play
+      function startAutoplay(){
+        stopAutoplay();
+        autoplayTimer = setInterval(nextSlide, intervalMs);
+      }
+      function stopAutoplay(){
+        if(autoplayTimer) clearInterval(autoplayTimer);
+        autoplayTimer = null;
+      }
+
+      // Controles do banner (prev/next)
+      document.getElementById('prevSlide').addEventListener('click', () => {
+        prevSlide();
+        startAutoplay(); // reinicia timer
+      });
+      document.getElementById('nextSlide').addEventListener('click', () => {
+        nextSlide();
+        startAutoplay(); // reinicia timer
+      });
+
+      // Cria slides e inicia autoplay
+      createSlides();
+      startAutoplay();
+
+      // ----------------------------------------------------------------------------
+      // Galeria: cria quadrados e carrega imagens de cfg.GALLERY_IMAGES
+      // ----------------------------------------------------------------------------
+      const galleryImages = Array.isArray(cfg.GALLERY_IMAGES) ? cfg.GALLERY_IMAGES : [];
+      function populateGallery(){
+        galleryArea.innerHTML = '';
+        if(galleryImages.length === 0){
+          // placeholder: 4 quadrados vazios
+          for(let i=0;i<4;i++){
+            const pic = document.createElement('div'); pic.className = 'pic card';
+            pic.innerHTML = '<div style="width:100%;aspect-ratio:1/1;background:#222;display:flex;align-items:center;justify-content:center;border-radius:6px;color:var(--muted)">Imagem de exemplo</div>';
+            galleryArea.appendChild(pic);
+          }
+          return;
+        }
+        galleryImages.forEach(url => {
+          const wrap = document.createElement('div');
+          wrap.className = 'pic';
+          const img = document.createElement('img');
+          img.src = url;
+          img.alt = 'Imagem GoBetter';
+          // Em muitos casos, as imagens reais serão cortadas/ajustadas pelo object-fit
+          wrap.appendChild(img);
+          galleryArea.appendChild(wrap);
+        });
+      }
+      populateGallery();
+
+      // ----------------------------------------------------------------------------
+      // COMENTÁRIOS (Contato) - usa localStorage
+      // ----------------------------------------------------------------------------
+      const commentsKey = cfg.COMMENTS_STORAGE_KEY || 'gobetter_comments_v1';
+      const nameInput = document.getElementById('commentName');
+      const msgInput = document.getElementById('commentMsg');
+      const sendBtn = document.getElementById('sendComment');
+      const clearBtn = document.getElementById('clearComments');
+      const commentsListEl = document.getElementById('commentsList');
+
+      // Recupera comentários do localStorage
+      function loadComments(){
+        try{
+          const raw = localStorage.getItem(commentsKey);
+          if(!raw) return [];
+          const arr = JSON.parse(raw);
+          if(Array.isArray(arr)) return arr;
+        }catch(e){
+          console.error('Erro lendo comentários:', e);
+        }
+        return [];
+      }
+      function saveComments(arr){
+        try{
+          localStorage.setItem(commentsKey, JSON.stringify(arr));
+        }catch(e){
+          console.error('Erro salvando comentários:', e);
+        }
+      }
+      function renderComments(){
+        const items = loadComments();
+        commentsListEl.innerHTML = '';
+        if(items.length === 0){
+          commentsListEl.innerHTML = '<div class="muted small">Nenhum comentário ainda. Seja o primeiro!</div>';
+          return;
+        }
+        // exibir do mais recente ao mais antigo
+        items.slice().reverse().forEach(c => {
+          const d = document.createElement('div');
+          d.className = 'comment';
+          d.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><strong>${(c.name||'Anônimo')}</strong><div class="small">${new Date(c.ts).toLocaleString()}</div></div><div style="margin-top:6px">${escapeHtml(c.msg)}</div>`;
+          commentsListEl.appendChild(d);
+        });
+      }
+
+      // Escape simples para evitar XSS acidental (apenas por segurança local)
+      function escapeHtml(str){
+        if(!str) return '';
+        return String(str)
+          .replace(/&/g,'&amp;')
+          .replace(/</g,'&lt;')
+          .replace(/>/g,'&gt;')
+          .replace(/"/g,'&quot;')
+          .replace(/'/g,'&#039;');
+      }
+
+      // Enviar comentário
+      sendBtn.addEventListener('click', () => {
+        const name = nameInput.value.trim();
+        const msg = msgInput.value.trim();
+        if(!msg){
+          alert('Escreva seu comentário antes de enviar.');
+          return;
+        }
+        const arr = loadComments();
+        arr.push({ name: name || 'Anônimo', msg, ts: Date.now() });
+        saveComments(arr);
+        msgInput.value = '';
+        renderComments();
+      });
+
+      // Limpar comentários (pede confirmação)
+      clearBtn.addEventListener('click', () => {
+        if(!confirm('Deseja realmente apagar todos os comentários deste navegador?')) return;
+        localStorage.removeItem(commentsKey);
+        renderComments();
+      });
+
+      // Inicializa lista
+      renderComments();
+
+      // ----------------------------------------------------------------------------
+      // Acessibilidade / experiência extra:
+      // Quando o usuário passa o mouse no banner, pausa autoplay; ao sair, retoma.
+      // ----------------------------------------------------------------------------
+      bannerContainer.addEventListener('mouseenter', stopAutoplay);
+      bannerContainer.addEventListener('mouseleave', startAutoplay);
+
+      // ----------------------------------------------------------------------------
+      // Ajustes finais: suporte para navegar por hash (home/sobre/contato)
+      // ----------------------------------------------------------------------------
+      function goToHash(){
+        const h = location.hash || '#home';
+        const el = document.querySelector(h);
+        if(el){
+          // pequena rolagem suave
+          el.scrollIntoView({behavior:'smooth',block:'start'});
+        }
+      }
+      window.addEventListener('hashchange', goToHash, false);
+
+      // ao carregar, aplica hash se existir
+      if(location.hash) setTimeout(goToHash, 100);
+
+      // ----------------------------------------------------------------------------
+      // Pequenas melhorias e instruções para você:
+      // - Troque os links em GB_CONFIG no topo do arquivo: LOGO_URL, BANNER_IMAGES, GALLERY_IMAGES, SIGNUP_LINK, QR_IMAGE_URL.
+      // - Se preferir ter páginas separadas (home.html, sobre.html, contato.html) posso gerar essa estrutura depois.
+      // - Comentários são salvos localmente no navegador. Para comentários em servidor, eu implemento opção com Firebase/Back-end.
+      // ----------------------------------------------------------------------------
+    })();
+  </script>
 </body>
 </html>
